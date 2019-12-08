@@ -8,10 +8,10 @@ https://github.com/adambielski/siamese-triplet: this has the maximum number of s
 https://github.com/zalandoresearch/fashion-mnist: This repo introduces a new dataset: Fashion MNIST
 
 # Relevant papers:
-Sampling Matters in Deep Embedding Learning: https://arxiv.org/pdf/1706.07567.pdf
+ https://arxiv.org/pdf/1706.07567.pdf: Sampling Matters in Deep Embedding Learning:
 This paper offer an excellent comparision between different sampling techniques and also offers the best performing sampling techniques
 
-In Defense of the Triplet Loss for Person Re-Identification: https://arxiv.org/pdf/1703.07737.pdf
+https://arxiv.org/pdf/1703.07737.pdf: In Defense of the Triplet Loss for Person Re-Identification
 This paper goes over using various types of mining methods for triplet loss applied to the task of person re-identification
 
 # Blogs:
