@@ -41,5 +41,22 @@ class TripletLoss(nn.Module):
             return losses.sum()
 
 
+class BinaryCrossEntropyLoss(nn.Module):
+    """
+    Binary Cross Entropy loss function for siamese network
+    Based on: https://becominghuman.ai/siamese-networks-algorithm-applications-and-pytorch-implementation-4ffa3304c18
+    """
+    def __init__(self, margin):
+        super(BinaryCrossEntropyLoss, self).__init__()
+
+    def forward(output_positive, output_negative, target_positive, target_negative):
+        loss_positive = F.cross_entropy(output_positive, target_positive)
+        loss_negative = F.cross_entropy(output_negative, target_negative)
+
+        loss = loss_positive + loss_negative
+        return loss
+
+
+
 
 
