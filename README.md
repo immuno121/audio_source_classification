@@ -7,6 +7,8 @@ https://github.com/adambielski/siamese-triplet: this has the maximum number of s
 
 https://github.com/zalandoresearch/fashion-mnist: This repo introduces a new dataset: Fashion MNIST
 
+https://github.com/QED0711/audio_analyzer: Visual Audio Analysis --> can be useful for visualizing differences between natural and electronic audio
+
 # Relevant papers:
  https://arxiv.org/pdf/1706.07567.pdf: Sampling Matters in Deep Embedding Learning:
 This paper offer an excellent comparision between different sampling techniques and also offers the best performing sampling techniques
