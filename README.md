@@ -9,6 +9,10 @@ https://github.com/zalandoresearch/fashion-mnist: This repo introduces a new dat
 
 https://github.com/QED0711/audio_analyzer: Visual Audio Analysis --> can be useful for visualizing differences between natural and electronic audio
 
+# Useful Code
+
+https://github.com/oscarknagg/voicemap: In Keras, but for speech source classification, embedding space visualization
+
 # Relevant papers:
  https://arxiv.org/pdf/1706.07567.pdf: Sampling Matters in Deep Embedding Learning:
 This paper offer an excellent comparision between different sampling techniques and also offers the best performing sampling techniques
