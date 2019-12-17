@@ -28,14 +28,14 @@ def train(train_loader, model, loss_fn, optimizer, num_epochs, cuda, metrics):
             
             if not type(images) in (tuple,list):
                 images = (images,)
-            images = tuple(np.swapaxes(image, 1, -1 for image in images)
+            images = tuple(np.swapaxes(image, 1, -1) for image in images)
             images = tuple(image.float() for image in images)
              
             labels = labels.long() if len(label)>0 else None
             
             if cuda:
                 images = tuple(image.cuda() for image in images)  # to(device)
-                if labels in not None:
+                if labels is not None:
                     labels = labels.cuda()  # to(device)
             #print(labels)
             
@@ -75,14 +75,14 @@ def test(test_loader, model, cuda, metric):
         for images, labels in test_loader:
             if not type(images) in (tuple,list):
                 images = (images,)
-            images = tuple(np.swapaxes(image, 1, -1 for image in images)
+            images = tuple(np.swapaxes(image, 1, -1) for image in images)
             images = tuple(image.float() for image in images)
              
             labels = labels.long() if len(label)>0 else None
             
             if cuda:
                 images = tuple(image.cuda() for image in images)  # to(device)
-                if labels in not None:
+                if labels is not None:
                     labels = labels.cuda()  # to(device)
             #print(labels)
             

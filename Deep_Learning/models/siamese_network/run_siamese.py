@@ -21,8 +21,9 @@ from sklearn.model_selection import train_test_split
 # from torchsummary import summary
 from trainer import fit
 from losses import ContrastiveLoss, TripletLoss
-from network import SiameseNet, TripletNet
-from dataset import SiameseDataset, TripletDataset
+from siamese_network import SiameseNet, TripletNet, EmbeddingNet
+from datasets import SiameseDataset, TripletDataset
+
 
 S_PATH = '/home/shasvatmukes/project/audio_classification/All_Spectrograms/Mel_Spectrograms/Recording_'
 
@@ -64,7 +65,7 @@ def separate_data_by_mic_id_train(train_ids):  # pass a list of train ids
 # device = 'cpu'
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if use_cuda else "cpu")
-
+cuda = True
 
 def run_experiments():
 
@@ -86,7 +87,7 @@ def run_experiments():
     list_IDs, y = separate_data_by_mic_id_train(IDs)
     train_list_IDs, test_list_IDs, y_train, y_test = train_test_split(
         list_IDs, y, test_size=0.2, random_state=42)  # 100
-
+    print(train_list_IDs)
     ######HYPERPARAMETERS#############################################
     num_epochs = 10
     num_classes = 2
@@ -96,16 +97,16 @@ def run_experiments():
     triplet_loss_margin = 1.0
     #################################################################
 
-    siamese_training_set = SiameseDataset(train_list_IDs, y_train)
+    siamese_training_set = SiameseDataset(train_list_IDs, y_train, True)
     siamese_train_loader = torch.utils.data.DataLoader(dataset=siamese_training_set,
                                                batch_size=batch_size,
                                                shuffle=True)
 
-    siamese_test_set = SiameseDataset(test_list_IDs, y_test)  # test_list_Ids
+    siamese_test_set = SiameseDataset(test_list_IDs, y_test, False)  # test_list_Ids
     siamese_test_loader = torch.utils.data.DataLoader(dataset=siamese_test_set,
                                               batch_size=batch_size,
                                               shuffle=True) 
-    embedding_net = EmbeddingNet()
+    embedding_net = EmbeddingNet(num_classes)
     model = SiameseNet(embedding_net)
     
     if cuda:
@@ -113,13 +114,13 @@ def run_experiments():
     
     # Loss and optimizer
 
-    criterion = ContrastiveLoss(margin)
+    criterion = ContrastiveLoss(contrastive_loss_margin)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # training
     train_mode=True
     print('starting training')
-    fit(train_loader, test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
+    fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
     PATH='/home/shasvatmukes/project/audio_classification/weights/simple_CNN_weights_log1.pth'  # unique names
     torch.save(model.state_dict(), PATH)
