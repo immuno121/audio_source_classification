@@ -6,7 +6,7 @@ from torch.utils.data.sampler import BatchSampler
 
 from sklearn.model_selection import train_test_split
 
-class SiameseNet(Dataset):
+class SiameseDataset(Dataset):
     """
     Train: For each sample randomly create a positive pair and negative pair
            So basically, we use this dataloader when we are using Siamese Net
@@ -24,8 +24,8 @@ class SiameseNet(Dataset):
 
     	
     	if self.train_mode:
-    		self.train_data = train_spectrogram_IDs
-    		self.train_labels =  y_train
+    	    self.train_data = train_spectrogram_IDs
+    	    self.train_labels =  y_train
     	    self.labels_set = set(self.train_labels.numpy())
     	    self.labels_to_indices = {label: np.where(self.train_labels.numpy() == label)[0]
     	                              for label in self.labels_set}   
@@ -33,10 +33,10 @@ class SiameseNet(Dataset):
     	    self.test_data = test_spectrogram_IDs
     	    self.test_labels = y_test
     	    self.labels_set = set(self.test_labels.numpy())
-  	        # labels to indices is a dict mapping, where each key is a label contained in the test set
-  	        # so in this case, we will have 2 keys: 0 and 1
-  	        # the value is a list which contains the indices of the datapoints in the test set which have same label as the key :)
-  	        self.labels_to_indices = {label: np.where(self.test_labels.numpy() == label)[0]
+  	    # labels to indices is a dict mapping, where each key is a label contained in the test set
+  	    # so in this case, we will have 2 keys: 0 and 1
+  	    # the value is a list which contains the indices of the datapoints in the test set which have same label as the key :)
+  	    self.labels_to_indices = {label: np.where(self.test_labels.numpy() == label)[0]
     	                              for label in self.labels_set} 
 
 
@@ -93,7 +93,7 @@ class SiameseNet(Dataset):
 
 
 
-class TripletMNIST(Dataset):
+class TripletDataset(Dataset):
     """
     Train: For each sample (anchor) randomly chooses a positive and negative samples
     Test: Creates fixed triplets for testing
