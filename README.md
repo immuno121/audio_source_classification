@@ -13,6 +13,8 @@ https://github.com/QED0711/audio_analyzer: Visual Audio Analysis --> can be usef
 
 https://github.com/oscarknagg/voicemap: In Keras, but for speech source classification, embedding space visualization
 
+https://github.com/Rachine/sampling_siamese2018: Sampling Techniques for audio signals code
+
 # Relevant papers:
  https://arxiv.org/pdf/1706.07567.pdf: Sampling Matters in Deep Embedding Learning:
 This paper offer an excellent comparision between different sampling techniques and also offers the best performing sampling techniques
