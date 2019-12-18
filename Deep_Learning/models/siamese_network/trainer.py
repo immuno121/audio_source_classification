@@ -116,8 +116,8 @@ def test(test_loader, model, loss_fn, cuda, metrics):
             target = target if len(target) > 0 else None
             if not type(data) in (tuple, list):
                 data = (data,)
-            data = tuple(np.swapaxes(data, 1, -1) for image in data)
-            data = tuple(data.float() for image in data)
+            data = tuple(np.swapaxes(image, 1, -1) for image in data)
+            data = tuple(image.float() for image in data)
             
             target = target.long()
 
@@ -140,7 +140,9 @@ def test(test_loader, model, loss_fn, cuda, metrics):
             val_loss += loss.item()
 
             for metric in metrics:
-                metric(outputs, target, loss_outputs)
+                print(metric(outputs, target, loss_outputs))
+
+
 
     return val_loss, metrics
 

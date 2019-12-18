@@ -38,6 +38,9 @@ class AccumulatedAccuracyMetric(Metric):
         self.total = 0
 
     def value(self):
+        print('correct = ', float(self.correct))
+        print('total = ', self.total)
+        print('accumulated accuracy = ', 100 * float(self.correct)/self.total)
         return 100 * float(self.correct) / self.total
 
     def name(self):

@@ -89,7 +89,7 @@ def run_experiments():
         list_IDs, y, test_size=0.2, random_state=42)  # 100
     #print(train_list_IDs)
     ######HYPERPARAMETERS#############################################
-    num_epochs = 1
+    num_epochs = 20
     num_classes = 2
     learning_rate = 1e-5
     batch_size = 1
@@ -118,7 +118,7 @@ def run_experiments():
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # training
-    train_mode=True
+    train_mode=False
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
