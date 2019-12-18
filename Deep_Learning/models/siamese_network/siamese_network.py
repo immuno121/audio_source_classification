@@ -40,10 +40,12 @@ class EmbeddingNet(nn.Module):
             nn.PReLU(),
             nn.MaxPool2d(kernel_size=2))
 
-
-        #self.fc = nn.Linear(256*132*41, num_classes) #Mel
-        self.fc = nn.Linear(256*133*41, self.num_classes)
-
+        self.fc1 = nn.Linear(256 * 132 * 41, 256)  # Mel
+        #self.fc2 = nn.Linear(1024, 512)
+        #self.fc2 = nn.Linear(1024, 256)
+        self.fc2 = nn.Linear(256, num_classes)
+        self.relu = nn.ReLU() 
+        
     def forward(self, x):
         '''
         output = self.convnet(x)
@@ -63,8 +65,16 @@ class EmbeddingNet(nn.Module):
         #print(out.size())
         out = out.reshape(out.size(0), -1)
         #print(out.size())
-        
-        out = self.fc(out)
+       
+        out = self.fc1(out)
+        out = self.relu(out)
+        out = self.fc2(out)
+        #out = self.relu(out)
+        #out = self.fc3(out)
+        #out = self.relu(out)
+        #out = self.fc4(out) 
+        return out
+  
         return out
 
     def get_embedding(self, x):

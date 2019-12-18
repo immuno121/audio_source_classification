@@ -11,12 +11,14 @@ class ContrastiveLoss(nn.Module):
     def __init__(self,margin=2.0):
         super(ContrastiveLoss, self).__init__()
         self.margin = margin
+        self.eps = 1e-9
+        
 
-    def forward(self, output1, output2, y):
-        euclidean_distance = F.pairwise_distance(output1,output2)
-        contrastive_loss = torch.mean((1-y) * torch.pow(euclidean_distance, 2 ) + y * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2))
-
-        return contrastive_loss
+    def forward(self, output1, output2, target, size_average=True):
+        distances  = (output2 - output1).pow(2).sum(1)  # squared distances
+        losses = 0.5 * (target.float() * distances +
+                        (1 + -1 * target).float() * F.relu(self.margin - (distances + self.eps).sqrt()).pow(2))
+        return losses.mean() if size_average else losses.sum()
 
 
 class TripletLoss(nn.Module):

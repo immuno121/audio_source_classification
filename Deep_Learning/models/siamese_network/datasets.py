@@ -1,11 +1,14 @@
 import numpy as np
 from PIL import Image
-
+import skimage
+from skimage import io, transform
 from torch.utils.data import Dataset
 from torch.utils.data.sampler import BatchSampler
-
 from sklearn.model_selection import train_test_split
+import os
 
+
+S_PATH = '/home/shasvatmukes/project/audio_classification/All_Spectrograms/Mel_Spectrograms/Recording_'
 class SiameseDataset(Dataset):
     """
     Train: For each sample randomly create a positive pair and negative pair
@@ -29,7 +32,7 @@ class SiameseDataset(Dataset):
             self.train_labels = np.array(self.train_labels)
     	    self.labels_set = set(self.train_labels)
     	    self.labels_to_indices = {label: np.where(self.train_labels == label)[0]
-    	                              for label in self.labels_set}   
+    	                              for label in self.labels_set}
     	else:
     	    self.test_data = test_spectrogram_IDs
     	    self.test_labels = y_test
@@ -39,7 +42,7 @@ class SiameseDataset(Dataset):
   	    # so in this case, we will have 2 keys: 0 and 1
   	    # the value is a list which contains the indices of the datapoints in the test set which have same label as the key :)
   	    self.labels_to_indices = {label: np.where(self.test_labels == label)[0]
-    	                              for label in self.labels_set} 
+    	                              for label in self.labels_set}
 
 
     	    random_state = np.random.RandomState(29)
@@ -55,7 +58,7 @@ class SiameseDataset(Dataset):
     	                                                   list(self.labels_set - set([self.test_labels[i].item()]))# remove the test_label of ith data point from the set of all lables in the dataset 
     	                                                                                                            # and choose 1 label. then index into dict with that label
     	                                                )
-    	                                           ]),                         
+    	                                           ]),
     	                       0]
     	                       for i in range(1, len(self.test_data), 2)]
             
@@ -65,37 +68,52 @@ class SiameseDataset(Dataset):
     	
     	if self.train_mode:
             target = np.random.randint(0, 2)
-            img1, label1 = self.train_data[index], self.train_labels[index].item()
+            img_1_id, label1 = self.train_data[index], self.train_labels[index].item()
             if target == 1:
                 siamese_index = index
                 while siamese_index == index:
-                    siamese_index = np.random.choice(self.labels_to_indices[label1])   
+                    siamese_index = np.random.choice(self.labels_to_indices[label1])
             else:
                 siamese_label = np.random.choice(list(self.labels_set - set([label1])))
                 siamese_index = np.random.choice(self.labels_to_indices[siamese_label])
-            img2 = self.train_data[siamese_index]
+            img_2_id = self.train_data[siamese_index]
 
         else:
-            img1 = self.test_data[self.test_pairs[index][0]]
-            img2 = self.test_data[self.test_pairs[index][1]]
+            img_1_id = self.test_data[self.test_pairs[index][0]]
+            img_2_id = self.test_data[self.test_pairs[index][1]]
             target = self.test_pairs[index][2]    
                 
+        print(target)
+        print(img_1_id)
+        #img1 = img1 + '.png'
+        print(img_2_id)
 
-        img1 = np.array(img1)
-        print(img1.shape)
-        img2 = np.array(img2) 
-        img1 = Image.fromarray(img1, mode='RGB')
-        img2 = Image.fromarray(img2, mode='RGB')
-        if self.transform is not None:
-            img1 = self.transform(img1)
-            img2 = self.transform(img2)
-        return (img1, img2), target
+        # Select sample
+        recording_id_1 = img_1_id.split('_')[-1].split('.')[0]
+
+        if "Natural" in img_1_id:
+            image_path = os.path.join(S_PATH + recording_id_1, 'Natural', img_1_id + '.png')
+        else:
+            image_path = os.path.join(S_PATH + recording_id_1, 'Electronic', img_1_id + '.png')
+        image1 = skimage.io.imread(image_path)  # returns a RGB numpy array
+
+          
+        recording_id_2 = img_2_id.split('_')[-1].split('.')[0]
+
+        if "Natural" in img_2_id:
+            image_path = os.path.join(S_PATH + recording_id_2, 'Natural', img_2_id + '.png')
+        else:
+            image_path = os.path.join(S_PATH + recording_id_2, 'Electronic', img_2_id + '.png')
+        image2 = skimage.io.imread(image_path)  # returns a RGB numpy array
+
+
+        return (image1, image2), target
 
     def __len__(self):
     	if self.train_mode: 
             return len(self.train_data)
         else:
-        	return len(self.test_data)
+            return len(self.test_data)
 
 
 
@@ -143,33 +161,51 @@ class TripletDataset(Dataset):
             self.test_triplets = triplets
 
     def __getitem__(self, index):
-        if self.train:
-            img1, label1 = self.train_data[index], self.train_labels[index].item()
+        
+        if self.train_mode:
+            img_1_id, label1 = self.train_data[index], self.train_labels[index].item()
             positive_index = index
             while positive_index == index:
                 positive_index = np.random.choice(self.label_to_indices[label1])
             negative_label = np.random.choice(list(self.labels_set - set([label1])))
             negative_index = np.random.choice(self.label_to_indices[negative_label])
-            img2 = self.train_data[positive_index]
-            img3 = self.train_data[negative_index]
+            img_2_id = self.train_data[positive_index]
+            img_3_id = self.train_data[negative_index]
         else:
-            img1 = self.test_data[self.test_triplets[index][0]]
-            img2 = self.test_data[self.test_triplets[index][1]]
-            img3 = self.test_data[self.test_triplets[index][2]]
+            img_1_id = self.test_data[self.test_triplets[index][0]]
+            img_2_id = self.test_data[self.test_triplets[index][1]]
+            img_3_id = self.test_data[self.test_triplets[index][2]]
+       
+
+          
+        # Select sample
+        recording_id_1 = img_1_id.split('_')[-1].split('.')[0]
+
+        if "Natural" in img_1_id:
+            image_path = os.path.join(S_PATH + recording_id_1, 'Natural', img_1_id + '.png')
+        else:
+            image_path = os.path.join(S_PATH + recording_id_1, 'Electronic', img_1_id + '.png')
+        image1 = skimage.io.imread(image_path)  # returns a RGB numpy array
+
+          
+        recording_id_2 = img_2_id.split('_')[-1].split('.')[0]
+
+        if "Natural" in img_2_id:
+            image_path = os.path.join(S_PATH + recording_id_2, 'Natural', img_2_id + '.png')
+        else:
+            image_path = os.path.join(S_PATH + recording_id_2, 'Electronic', img_2_id + '.png')
+        image2 = skimage.io.imread(image_path)  # returns a RGB numpy array
+ 
         
-        img1 = np.array(img1)
-        img2 = np.array(img2)
-        img3 = np.array(img3)
+        recording_id_3 = img_3_id.split('_')[-1].split('.')[0]
 
+        if "Natural" in img_3_id:
+            image_path = os.path.join(S_PATH + recording_id_3, 'Natural', img_3_id + '.png')
+        else:
+            image_path = os.path.join(S_PATH + recording_id_3, 'Electronic', img_3_id + '.png')
+        image3  = skimage.io.imread(image_path)  # returns a RGB numpy array
 
-        img1 = Image.fromarray(img1, mode='RGB')
-        img2 = Image.fromarray(img2, mode='RGB')
-        img3 = Image.fromarray(img3, mode='RGB')
-        if self.transform is not None:
-            img1 = self.transform(img1)
-            img2 = self.transform(img2)
-            img3 = self.transform(img3)
-        return (img1, img2, img3), []
+        return (image1, image2, image3), []
 
     def __len__(self):
     	if self.train_mode: 

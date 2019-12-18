@@ -31,13 +31,13 @@ def train(train_loader, model, loss_fn, optimizer, num_epochs, cuda, metrics):
             images = tuple(np.swapaxes(image, 1, -1) for image in images)
             images = tuple(image.float() for image in images)
              
-            labels = labels.long() if len(label)>0 else None
-            
+            labels = labels.long() if len(labels)>0 else None
+            print(labels.type())   
             if cuda:
                 images = tuple(image.cuda() for image in images)  # to(device)
                 if labels is not None:
                     labels = labels.cuda()  # to(device)
-            #print(labels)
+            print('labels', labels)
             
             outputs = model(*images)
             if type(outputs) not in (tuple, list):
@@ -78,7 +78,7 @@ def test(test_loader, model, cuda, metric):
             images = tuple(np.swapaxes(image, 1, -1) for image in images)
             images = tuple(image.float() for image in images)
              
-            labels = labels.long() if len(label)>0 else None
+            labels = labels.long() if len(labels)>0 else None
             
             if cuda:
                 images = tuple(image.cuda() for image in images)  # to(device)

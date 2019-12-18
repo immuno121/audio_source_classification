@@ -87,7 +87,7 @@ def run_experiments():
     list_IDs, y = separate_data_by_mic_id_train(IDs)
     train_list_IDs, test_list_IDs, y_train, y_test = train_test_split(
         list_IDs, y, test_size=0.2, random_state=42)  # 100
-    print(train_list_IDs)
+    #print(train_list_IDs)
     ######HYPERPARAMETERS#############################################
     num_epochs = 10
     num_classes = 2
@@ -122,7 +122,7 @@ def run_experiments():
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
-    PATH='/home/shasvatmukes/project/audio_classification/weights/simple_CNN_weights_log1.pth'  # unique names
+    PATH='/home/shasvatmukes/project/audio_classification/weights/vanilla_siamese_weights_log1.pth'  # unique names
     torch.save(model.state_dict(), PATH)
 
     model.load_state_dict(torch.load(PATH))
