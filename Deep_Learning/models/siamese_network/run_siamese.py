@@ -23,7 +23,7 @@ from trainer import fit
 from losses import ContrastiveLoss, TripletLoss
 from siamese_network import SiameseNet, TripletNet, EmbeddingNet
 from datasets import SiameseDataset, TripletDataset
-
+from metrics import AccumulatedAccuracyMetric
 
 S_PATH = '/home/shasvatmukes/project/audio_classification/All_Spectrograms/Mel_Spectrograms/Recording_'
 
@@ -89,11 +89,11 @@ def run_experiments():
         list_IDs, y, test_size=0.2, random_state=42)  # 100
     #print(train_list_IDs)
     ######HYPERPARAMETERS#############################################
-    num_epochs = 10
+    num_epochs = 1
     num_classes = 2
-    learning_rate = 1e-3
+    learning_rate = 1e-5
     batch_size = 1
-    contrastive_loss_margin = 1.0
+    contrastive_loss_margin = 5.0
     triplet_loss_margin = 1.0
     #################################################################
 
@@ -128,7 +128,7 @@ def run_experiments():
     model.load_state_dict(torch.load(PATH))
     # Test
     train_mode=False
-    fit(train_loader, test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
+    fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
     '''
     RESULTS
