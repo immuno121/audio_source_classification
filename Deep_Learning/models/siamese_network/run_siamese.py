@@ -59,6 +59,7 @@ def separate_data_by_mic_id_train(train_ids):  # pass a list of train ids
             os.path.join(S_PATH + str(i), 'Natural', '*.png')):
             train_list_IDs.append(filename.split('/')[-1].split('.')[0])
             y.append(1)
+    print(y)
     return train_list_IDs, y
 
 
@@ -93,36 +94,36 @@ def run_experiments():
     num_classes = 2
     learning_rate = 1e-5
     batch_size = 1
-    contrastive_loss_margin = 5.0
+    contrastive_loss_margin = 3.0
     triplet_loss_margin = 1.0
     #################################################################
 
-    siamese_training_set = SiameseDataset(train_list_IDs, y_train, True)
+    siamese_training_set = TripletDataset(train_list_IDs, y_train, True)   #SiameseDataset
     siamese_train_loader = torch.utils.data.DataLoader(dataset=siamese_training_set,
                                                batch_size=batch_size,
                                                shuffle=True)
 
-    siamese_test_set = SiameseDataset(test_list_IDs, y_test, False)  # test_list_Ids
+    siamese_test_set = TripletDataset(test_list_IDs, y_test, False)  # SiameseDataset
     siamese_test_loader = torch.utils.data.DataLoader(dataset=siamese_test_set,
                                               batch_size=batch_size,
                                               shuffle=True) 
     embedding_net = EmbeddingNet(num_classes)
-    model = SiameseNet(embedding_net)
+    model = TripletNet(embedding_net) # SiameseNet
     
     if cuda:
         model.cuda() 
     
     # Loss and optimizer
-
-    criterion = ContrastiveLoss(contrastive_loss_margin)
+    criterion = TripletLoss(triplet_loss_margin)
+    #criterion = ContrastiveLoss(contrastive_loss_margin)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # training
-    train_mode=False
+    train_mode=True
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
-    PATH='/home/shasvatmukes/project/audio_classification/weights/vanilla_siamese_weights_log1.pth'  # unique names
+    PATH='/home/shasvatmukes/project/audio_classification/weights/triplet_weights_log1.pth'  # unique names
     torch.save(model.state_dict(), PATH)
 
     model.load_state_dict(torch.load(PATH))

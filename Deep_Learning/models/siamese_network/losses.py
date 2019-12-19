@@ -31,6 +31,7 @@ class TripletLoss(nn.Module):
     def __init__(self, margin):
         super(TripletLoss, self).__init__()
         self.margin = margin
+        print('triplet loss')
 
     def forward(self, ancohor, postive, negative, size_average=True):
         distance_positive = (anchor - postive).pow(2).sum(1)

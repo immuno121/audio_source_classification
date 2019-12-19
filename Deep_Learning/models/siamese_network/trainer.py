@@ -33,7 +33,7 @@ def train(train_loader, model, loss_fn, optimizer, num_epochs, cuda, metrics):
             images = tuple(image.float() for image in images)
              
             labels = labels.long() if len(labels)>0 else None
-            print(labels.type())   
+            #print(labels.type())   
             if cuda:
                 images = tuple(image.cuda() for image in images)  # to(device)
                 if labels is not None:
