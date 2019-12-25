@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import os
 
 
-S_PATH = '/home/shasvatmukes/project/audio_classification/All_Spectrograms/Mel_Spectrograms/Recording_'
+S_PATH = '/home/dghose/Voice_Classification/All_Spectrograms/All_Spectrograms/Mel_Spectrograms/Recording_'
 class SiameseDataset(Dataset):
     """
     Train: For each sample randomly create a positive pair and negative pair
@@ -126,9 +126,8 @@ class TripletDataset(Dataset):
         self.spectrogram_IDs = spectrogram_IDs
         self.labels = labels
     	self.train_mode = train_mode
-
-        train_spectrogram_IDs, test_spectrogram_IDs, y_train, y_test = train_test_split(spectrogram_IDs, labels, test_size=0.2, random_state=42)  # 100
-
+        print(spectrogram_IDs)
+        train_spectrogram_IDs, test_spectrogram_IDs, y_train, y_test = train_test_split(spectrogram_IDs, labels, test_size=0.2, random_state=42)  # 100)
     	
     	if self.train_mode:
     	    self.train_data = train_spectrogram_IDs

@@ -25,7 +25,7 @@ from siamese_network import SiameseNet, TripletNet, EmbeddingNet
 from datasets import SiameseDataset, TripletDataset
 from metrics import AccumulatedAccuracyMetric
 
-S_PATH = '/home/shasvatmukes/project/audio_classification/All_Spectrograms/Mel_Spectrograms/Recording_'
+S_PATH = '/home/dghose/Voice_Classification/All_Spectrograms/All_Spectrograms/Mel_Spectrograms/Recording_'
 
 
 def separate_data_by_mic_id_test(test_ids):  # pass a single test id
@@ -90,7 +90,7 @@ def run_experiments():
         list_IDs, y, test_size=0.2, random_state=42)  # 100
     #print(train_list_IDs)
     ######HYPERPARAMETERS#############################################
-    num_epochs = 20
+    num_epochs = 1
     num_classes = 2
     learning_rate = 1e-5
     batch_size = 1
@@ -110,6 +110,7 @@ def run_experiments():
     embedding_net = EmbeddingNet(num_classes)
     model = TripletNet(embedding_net) # SiameseNet
     
+    print('outside model') 
     if cuda:
         model.cuda() 
     
@@ -123,7 +124,7 @@ def run_experiments():
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
-    PATH='/home/shasvatmukes/project/audio_classification/weights/triplet_weights_log1.pth'  # unique names
+    PATH='/home/dghose/Voice_Classification/weights/triplet_weights_log1.pth'  # unique names
     torch.save(model.state_dict(), PATH)
 
     model.load_state_dict(torch.load(PATH))

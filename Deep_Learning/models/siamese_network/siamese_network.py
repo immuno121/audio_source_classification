@@ -119,6 +119,7 @@ class TripletNet(nn.Module):
         self.embedding_net = embedding_net
 
     def forward(self, x1, x2, x3):
+        print('inside triplet net')
         output1 = self.embedding_net(x1)
         output2 = self.embedding_net(x2)
         output3 = self.embedding_net(x3)

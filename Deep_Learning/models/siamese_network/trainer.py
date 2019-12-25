@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from metrics import Metric,  AccumulatedAccuracyMetric
 
-def fit(train_loader, val_loader, model, loss_fn, optimizer, n_epochs, cuda, train_mode, metrics = [AccumulatedAccuracyMetric()]):
+def fit(train_loader, val_loader, model, loss_fn, optimizer, n_epochs, cuda, train_mode, metrics = []):
 
     """
     Loaders, model, loss function and metrics should work together for a given task,
@@ -70,7 +70,7 @@ def train(train_loader, model, loss_fn, optimizer, num_epochs, cuda, metrics):
 
 def test(test_loader, model, loss_fn, cuda, metrics):
     print('testing')
-    '''
+    
     model.eval()  # eval mode (batchnorm uses moving mean/variance instead of mini-batch mean/variance)
     with torch.no_grad():
         correct = 0
@@ -93,6 +93,11 @@ def test(test_loader, model, loss_fn, cuda, metrics):
             if type(outputs) not in (tuple, list):
                 outputs = (outputs,)
             
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            print('Test Accuracy of the model: {} %'.format(100 * correct / total))            
             loss_inputs = outputs
             
             if labels is not None:
@@ -105,8 +110,8 @@ def test(test_loader, model, loss_fn, cuda, metrics):
             
             for metric in metrics:
                 metric(outputs, target, loss_outputs)
-     '''
      
+    '''
     with torch.no_grad():
         for metric in metrics:
             metric.reset()
@@ -119,7 +124,7 @@ def test(test_loader, model, loss_fn, cuda, metrics):
             data = tuple(np.swapaxes(image, 1, -1) for image in data)
             data = tuple(image.float() for image in data)
             
-            target = target.long()
+            target = target.long() if len(target)>0 else None
 
             if cuda:
                 data = tuple(d.cuda() for d in data)
@@ -145,5 +150,5 @@ def test(test_loader, model, loss_fn, cuda, metrics):
 
 
     return val_loss, metrics
-
+    '''
           
