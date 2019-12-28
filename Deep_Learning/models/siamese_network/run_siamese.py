@@ -31,7 +31,7 @@ S_PATH = '/home/dghose/Voice_Classification/All_Spectrograms/All_Spectrograms/Me
 def separate_data_by_mic_id_test(test_ids):  # pass a single test id
     test_list_IDs = []
     y = []
-    for i in  range(len(test_ids)):
+    for i in  range(1, len(test_ids)+1):
         for filename in glob.glob(
             os.path.join(S_PATH + str(test_id), 'Electronic', '*.png')):
             test_list_IDs.append(filename.split('/')[-1].split('.')[0])
@@ -47,7 +47,8 @@ def separate_data_by_mic_id_test(test_ids):  # pass a single test id
 def separate_data_by_mic_id_train(train_ids):  # pass a list of train ids
     train_list_IDs = []
     y = []
-    for i in range(len(train_ids)):
+    for i in range(1, len(train_ids)+1):
+        print(i)
         for filename in glob.glob(
             os.path.join(
                 S_PATH + str(i), 'Electronic', '*.png')):

@@ -23,19 +23,19 @@ class SiameseDataset(Dataset):
         self.labels = labels
     	self.train_mode = train_mode
 
-        train_spectrogram_IDs, test_spectrogram_IDs, y_train, y_test = train_test_split(spectrogram_IDs, labels, test_size=0.2, random_state=42)  # 100
+        #train_spectrogram_IDs, test_spectrogram_IDs, y_train, y_test = train_test_split(spectrogram_IDs, labels, test_size=0.2, random_state=42)  # 100
 
     	
     	if self.train_mode:
-    	    self.train_data = train_spectrogram_IDs
-    	    self.train_labels =  y_train
+    	    self.train_data = spectrogram_IDs
+    	    self.train_labels =  labels
             self.train_labels = np.array(self.train_labels)
     	    self.labels_set = set(self.train_labels)
     	    self.labels_to_indices = {label: np.where(self.train_labels == label)[0]
     	                              for label in self.labels_set}
     	else:
-    	    self.test_data = test_spectrogram_IDs
-    	    self.test_labels = y_test
+    	    self.test_data = spectrogram_IDs
+    	    self.test_labels = labels
             self.test_labels = np.array(self.test_labels)
     	    self.labels_set = set(self.test_labels)
   	    # labels to indices is a dict mapping, where each key is a label contained in the test set
@@ -63,6 +63,7 @@ class SiameseDataset(Dataset):
     	                       for i in range(1, len(self.test_data), 2)]
             
             self.test_pairs = positive_pairs + negative_pairs
+            print(self.test_pairs, 'test_pairs')
 
     def __getitem__(self, index):
     	
