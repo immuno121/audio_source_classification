@@ -84,11 +84,13 @@ def run_experiments():
     train_list_IDs = []
     test_list_IDs = []
     y = []
-    IDs = [1, 2, 3, 4]
+    IDs = [1, 2, 3, 4, 5]
     list_IDs, y = separate_data_by_mic_id_train(IDs)
+    print(len(list_IDs), 'all')
     train_list_IDs, test_list_IDs, y_train, y_test = train_test_split(
         list_IDs, y, test_size=0.2, random_state=42)  # 100
-    #print(train_list_IDs)
+    print(train_list_IDs, 'train')
+    print(test_list_IDs, 'test')
     ######HYPERPARAMETERS#############################################
     num_epochs = 1
     num_classes = 2
@@ -98,25 +100,25 @@ def run_experiments():
     triplet_loss_margin = 1.0
     #################################################################
 
-    siamese_training_set = TripletDataset(train_list_IDs, y_train, True)   #SiameseDataset
+    siamese_training_set = SiameseDataset(train_list_IDs, y_train, True)   #TripletDataset
     siamese_train_loader = torch.utils.data.DataLoader(dataset=siamese_training_set,
                                                batch_size=batch_size,
                                                shuffle=True)
 
-    siamese_test_set = TripletDataset(test_list_IDs, y_test, False)  # SiameseDataset
+    siamese_test_set = SiameseDataset(test_list_IDs, y_test, False)  # TripletDataset
     siamese_test_loader = torch.utils.data.DataLoader(dataset=siamese_test_set,
                                               batch_size=batch_size,
                                               shuffle=True) 
     embedding_net = EmbeddingNet(num_classes)
-    model = TripletNet(embedding_net) # SiameseNet
+    model = SiameseNet(embedding_net) # TripletNet
     
     print('outside model') 
     if cuda:
         model.cuda() 
     
     # Loss and optimizer
-    criterion = TripletLoss(triplet_loss_margin)
-    #criterion = ContrastiveLoss(contrastive_loss_margin)
+    #criterion = TripletLoss(triplet_loss_margin)
+    criterion = ContrastiveLoss(contrastive_loss_margin)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # training
@@ -124,7 +126,7 @@ def run_experiments():
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
-    PATH='/home/dghose/Voice_Classification/weights/triplet_weights_log1.pth'  # unique names
+    PATH='/home/dghose/Voice_Classification/weights/siamese_weights_log.pth'  # unique names
     torch.save(model.state_dict(), PATH)
 
     model.load_state_dict(torch.load(PATH))
