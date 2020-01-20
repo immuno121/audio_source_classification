@@ -93,12 +93,13 @@ def run_experiments():
     print(train_list_IDs, 'train')
     print(test_list_IDs, 'test')
     ######HYPERPARAMETERS#############################################
-    num_epochs = 1
+    num_epochs = 10
     num_classes = 2
     learning_rate = 1e-5
     batch_size = 1
     contrastive_loss_margin = 3.0
     triplet_loss_margin = 1.0
+    #weight_counter = 1
     #################################################################
 
     siamese_training_set = SiameseDataset(train_list_IDs, y_train, True)   #TripletDataset
@@ -115,7 +116,7 @@ def run_experiments():
     
     print('outside model') 
     if cuda:
-        model.cuda() 
+        model.cuda()
     
     # Loss and optimizer
     #criterion = TripletLoss(triplet_loss_margin)
@@ -127,7 +128,7 @@ def run_experiments():
     print('starting training')
     fit(siamese_train_loader, siamese_test_loader, model, criterion, optimizer, num_epochs, use_cuda, train_mode)
 
-    PATH='/home/dghose/Voice_Classification/weights/siamese_weights_log.pth'  # unique names
+    PATH='/mnt/nfs/scratch1/dghose/audio_siamese/siamese_weights_log_{}_{}_{}_{}_{}.pth'.format(num_epochs,num_classes,learning_rate,batch_size,contrastive_loss_margin)  # unique names
     torch.save(model.state_dict(), PATH)
 
     model.load_state_dict(torch.load(PATH))
